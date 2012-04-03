@@ -1,0 +1,3 @@
+ git log --format="@@%ci@@ &&%s&&" --since=$1 > glog.txt
+
+
