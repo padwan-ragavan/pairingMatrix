@@ -37,7 +37,7 @@ def printMatrix (names, pairingMatrix)
     print "<tr><td>-</td>"
     names.each{|name| print "<td>#{name}</td>"}
     print "</tr>\n"
-
+	
     names.each{ |name1|
         print "<tr>"
         print "<td>#{name1}</td>"
@@ -49,4 +49,17 @@ def printMatrix (names, pairingMatrix)
     print "</table>"
 end
 
-printMatrix(names, pairingMatrix)
+def printCSV (names, pairingMatrix)
+	print ","
+	names.each{|name| print "#{name},"}
+	print "\n"
+	names.each{ |name1|
+        print "#{name1},"
+        names.each{ |name2|
+            print "#{pairingMatrix[name1][name2]["count"]},"
+        }
+	print "\n"
+    }
+end
+
+printCSV(names, pairingMatrix)
