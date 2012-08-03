@@ -1,20 +1,54 @@
-names=[]
+$names=[]
+$pairingMatrix = {}
 
-File.open('names').each_line{ |s|
-  s.strip!
-  names.push(s.upcase) if s.length > 0
-}
+def addNamesIfNotPresent (commitNames)
+	commitNames.each{ |name|
+			$names.push(name.upcase) if !$names.include? name
+	}
+end
 
-pairingMatrix = {}
+def addPairWhenNotSameDay (commitNames, commitDate)
+	name1 = commitNames[0]
+	name2 = commitNames[1]
+	$pairingMatrix[name1] = {} if $pairingMatrix[name1] == nil
+	if $pairingMatrix[name1][name2] == nil
+		$pairingMatrix[name1][name2] = {} 
+		$pairingMatrix[name1][name2]["count"] = 0
+	end
+	$pairingMatrix[name1][name2]["count"] = $pairingMatrix[name1][name2]["count"] + 1 if $pairingMatrix[name1][name2]["date"] != commitDate
+	$pairingMatrix[name1][name2]["date"] = commitDate
+end
 
-names.each{ |name1|
-    names.each{ |name2|
-        pairingMatrix[name1] = {} if pairingMatrix[name1] == nil
-        pairingMatrix[name1][name2] = {}
-        pairingMatrix[name1][name2]["count"] = 0
+def printMatrix ()
+    print "<table>"
+    print "<tr><td>-</td>"
+    $names.each{|name| print "<td>#{name}</td>"}
+    print "</tr>\n"
+	
+    $names.each{ |name1|
+        print "<tr>"
+        print "<td>#{name1}</td>"
+        $names.each{ |name2|
+            print "<td>#{$pairingMatrix[name1][name2]["count"]}</td>"
+        }
+        print "</tr>\n"
     }
-}
+    print "</table>"
+end
 
+def printCSV ()
+	print ","
+	$names.each{|name| print "#{name},"}
+	print "\n"
+	$names.each{ |name1|
+        print "#{name1},"
+        $names.each{ |name2|
+			print "#{$pairingMatrix[name1][name2]["count"]}" if $pairingMatrix[name1][name2] != nil
+			print ","
+        }
+	print "\n"
+    }
+end
 
 File.open('glog').each_line{ |s|
   s.strip!
@@ -27,39 +61,9 @@ File.open('glog').each_line{ |s|
   commitNames.push(name1.upcase)
   commitNames.push(name2.upcase)
   commitNames.sort()
-  pairingMatrix[commitNames[0]][commitNames[1]]["count"] = pairingMatrix[commitNames[0]][commitNames[1]]["count"] + 1 if pairingMatrix[commitNames[0]][commitNames[1]]["date"] != commitDate
-  pairingMatrix[commitNames[0]][commitNames[1]]["date"] = commitDate
+  addNamesIfNotPresent(commitNames)
+  addPairWhenNotSameDay(commitNames, commitDate)
+  addPairWhenNotSameDay(commitNames.reverse, commitDate)
 }
 
-
-def printMatrix (names, pairingMatrix)
-    print "<table>"
-    print "<tr><td>-</td>"
-    names.each{|name| print "<td>#{name}</td>"}
-    print "</tr>\n"
-	
-    names.each{ |name1|
-        print "<tr>"
-        print "<td>#{name1}</td>"
-        names.each{ |name2|
-            print "<td>#{pairingMatrix[name1][name2]["count"]}</td>"
-        }
-        print "</tr>\n"
-    }
-    print "</table>"
-end
-
-def printCSV (names, pairingMatrix)
-	print ","
-	names.each{|name| print "#{name},"}
-	print "\n"
-	names.each{ |name1|
-        print "#{name1},"
-        names.each{ |name2|
-            print "#{pairingMatrix[name1][name2]["count"]},"
-        }
-	print "\n"
-    }
-end
-
-printCSV(names, pairingMatrix)
+printCSV()
