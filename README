@@ -1,0 +1,27 @@
+what
+
+	Generates pairing matrix as csv from git log.
+
+	Expects commit message to be of format
+		name1[non-character][name2][non-character][rest-of-commit-msg]
+		ex
+			foo,bar|000|generate csv
+			foo#000#generate csv
+			
+	
+	counts the consecutive number of days pairing as count
+	
+How
+
+	manually generate git log from your repository using 
+		"git log --format="@@%ci@@ &&%s&&" --since=3.weeks > glog"
+	paste the glog in pairingmatrix dir
+	run ruby parser.rb > pairingMatrix.csv
+	
+Requirements
+
+	git
+	ruby
+	
+Examples
+	look at the glog and pairingMatrix.csv
