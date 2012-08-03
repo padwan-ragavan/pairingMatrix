@@ -16,8 +16,9 @@ How
 	manually generate git log from your repository using 
 		"git log --format="@@%ci@@ &&%s&&" --since=3.weeks > glog"
 	paste the glog in pairingmatrix dir
-	run ruby parser.rb > pairingMatrix.csv
+	run ruby parser.rb [noiseThreshold=4] > pairingMatrix.csv
 	
+	noiseThreshold is optional defaulting to 4
 Requirements
 
 	git

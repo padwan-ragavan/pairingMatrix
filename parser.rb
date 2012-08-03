@@ -19,7 +19,7 @@ def addPairWhenNotSameDay (commitNames, commitDate)
 	$pairingMatrix[name1][name2]["date"] = commitDate
 end
 
-def printMatrix ()
+def printHTML ()
     print "<table>"
     print "<tr><td>-</td>"
     $names.each{|name| print "<td>#{name}</td>"}
@@ -50,6 +50,14 @@ def printCSV ()
     }
 end
 
+def removeNoise(threshold)
+	$pairingMatrix.each{ |k,v|
+		sum=0		
+		$pairingMatrix[k].each { |pk,pv| sum+=pv["count"] }
+		$names.delete(k) if sum <= threshold
+	}
+end
+
 File.open('glog').each_line{ |s|
   s.strip!
   commitDate = /@@(\d+-\d+-\d+)/.match(s)[1]
@@ -66,4 +74,5 @@ File.open('glog').each_line{ |s|
   addPairWhenNotSameDay(commitNames.reverse, commitDate)
 }
 
+removeNoise(ARGV[0].to_i > 0 ? ARGV[0].to_i : 4)
 printCSV()
